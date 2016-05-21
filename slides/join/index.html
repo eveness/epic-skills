@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>JOIN</title>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="shower/styles/screen-16x10.css">
+	<link rel="stylesheet" href="highlight/styles/github-gist.css">
+	<style>
+		.slide {
+			padding-top: 30px;
+			padding-left: 60px;
+			font-size: 22px;
+		}
+		.slide::after {
+			background: #e74a2a;
+			height: auto;
+			padding-top: 0;
+			width: 30px;
+		}
+		.slide pre code {
+			line-height: 1.5;
+			width: auto;
+			margin: 0;
+			padding: 5px;
+			background: #eaeef3;
+		}
+		.slide h2 {
+			color: #e74a2a;
+			font-size: 38px;
+			font-weight: 400;
+		}
+		.progress {
+			border: 8px solid #3d85c6;
+		}
+		.desc {
+			line-height: 1.5;
+		}
+	</style>
+</head>
+<body class="shower list">
+
+	<header class="caption">
+		<h1>JOIN</h1>
+	</header>
+
+<section class="slide">
+<h2>Cвязи таблиц</h2>
+<img src="img/tables_relations-1.jpg" alt="" width="591" height="528">
+</section>
+
+<section class="slide">
+<h2>JOIN</h2>
+Связываем таблицы <code>messages</code> и <code>users</code> при помощи JOIN:
+<pre style="font-size: 0.9em;"><code class="sql">SELECT `m`.*, `u`.`login` 
+       FROM `messages` AS `m` 
+       JOIN `users` AS `u` 
+       ON `u`.`id` = `m`.`user_id`;</code></pre>
+<p>Мы получим все записи, кроме <code>id</code> = 1, так как там не задано значение поля <code>user_id</code>.</p>
+<p><code>JOIN</code> связывает данные, если есть значения в обеих таблицах.</p>
+</section>
+
+<section class="slide">
+<h2>LEFT JOIN</h2>
+Выход есть, это LEFT JOIN:
+<pre style="font-size: 0.9em;"><code class="sql">SELECT `m`.*, `u`.`login` 
+       FROM `messages` AS `m` 
+       LEFT JOIN `users` AS `u` 
+       ON `u`.`id` = `m`.`user_id`;</code></pre>
+Теперь мы получим все записи, но у записи с <code>id</code> = 1 значение <code>login</code> будет <code>NULL</code>.<br>
+Таким образом, например, можно получить информацию об анонимных сообщениях:
+<pre style="font-size: 0.9em;"><code class="sql">SELECT `m`.`id` 
+       FROM `messages` AS `m` 
+       LEFT JOIN `users` AS `u` 
+       ON `u`.`id` = `m`.`user_id`
+       WHERE `u`.`login` IS NULL;</code></pre>
+</section>
+
+	<div class="progress"></div>
+	<script src="shower/shower.min.js"></script>
+	<script src="highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

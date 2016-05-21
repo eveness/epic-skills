@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>mysql, mysqli и PDO</title>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="shower/styles/screen-16x10.css">
+	<link rel="stylesheet" href="highlight/styles/github-gist.css">
+	<style>
+		.slide {
+			padding-top: 30px;
+			padding-left: 60px;
+			font-size: 22px;
+		}
+		.slide::after {
+			background: #e74a2a;
+			height: auto;
+			padding-top: 0;
+			width: 30px;
+		}
+		.slide code {
+			font-size: 19px;
+		}
+		.slide pre code {
+			line-height: 1.5;
+			width: auto;
+			margin: 0;
+			padding: 5px;
+			background: #eaeef3;
+		}
+		.slide h2 {
+			color: #e74a2a;
+			font-size: 38px;
+			font-weight: 400;
+		}
+		.progress {
+			border: 8px solid #3d85c6;
+		}
+		.desc {
+			line-height: 1.5;
+		}
+	</style>
+</head>
+<body class="shower list">
+
+	<header class="caption">
+		<h1>mysql, mysqli и PDO</h1>
+	</header>
+
+<section class="slide">
+<h2>MySQL и PHP</h2>
+<p>В PHP есть несколько возможностей работать с MySQL при помощи расширений.</p>
+<p class="desc"><b>mysql</b><br>
+Расширение с процедурным интерфейсом (функции mysqli_) для работы с MySQL версии 4.1.3 и меньше, является устаревшим и удалено из версии PHP 7, не рекомендуется его использовать.</p>
+<p class="desc"><b>mysqli</b><br>Улучшенное (<b>i</b>mproved) расширение, поддерживает как процедурный интерфейс (функции mysqli_), так и объектно-ориентированный.</p>
+<p class="desc"><b>PDO</b> (PHP Data Objects)<br>Предоставляет абстракцию доступа к данным (но не запросов), то есть избавляет от зависимости от определенной СУБД и упрощает миграцию между разными СУБД. Внедрено в PHP 5.1, рекомендуется к использованию.</p>
+
+</section>
+
+<section class="slide">
+<h2>Подключение к базе данных (mysqli)</h2>
+<p>Процедурный стиль:</p>
+<pre><code class="php">mysqli_connect($host, $username, $passwd, $dbname);</code></pre>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');</code></pre>
+<p>Объектно-ориентированный стиль:</p>
+<pre><code class="php">mysqli::__construct($host, $username, $passwd, $dbname);</code></pre>
+<pre><code class="php">$db = new mysqli('localhost', 'root', '', 'epic');</code></pre>
+</section>
+
+
+<section class="slide">
+<h2>Выполнение запросов (mysqli)</h2>
+<pre><code class="php">mysqli_query($link, $query);</code></pre>
+<pre><code class="php">$result = mysqli_query($db, "SELECT * FROM `messages`");</code></pre>
+<p>Возвращает объект <code>mysqli_result</code> (результирующий набор), с которым можно работать при помощи функций или <code>FALSE</code>.</p>
+<p>
+	<code>mysqli_num_rows</code> - количество строк в выборке<br>
+	<code>mysqli_fetch_all</code> - поместить в массив (MYSQLI_ASSOC, MYSQLI_NUM, MYSQLI_BOTH)<br>
+	<code>mysqli_fetch_array</code> - пройтись по массиву<br>
+	<code>mysqli_fetch_assoc</code> - пройтись по ассоциативному массиву<br>
+	<code>mysqli_fetch_row</code> - пройтись по обычному массиву<br>
+	...
+</p>
+</section>
+
+<section class="slide">
+<h2>Пример выполнения запроса (mysqli)</h2>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');
+
+$result = mysqli_query($db, "SELECT * FROM `messages`");
+
+while($msg = mysqli_fetch_assoc($result)) {
+	echo $msg['title'].'&lt;br>';
+}</code></pre>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');
+
+$result = mysqli_query($db, "SELECT `id`, `title`, `message` 
+                                    FROM `messages`");
+
+while($msg = mysqli_fetch_row($result)) {
+	echo $msg[1].'&lt;br>';
+}</code></pre>
+</section>
+
+<!-- <section class="slide white">
+    <img class="cover height" src="img/keep-calm-and-love-programming.jpg">
+</section> -->
+
+
+<section class="slide">
+<h2>Пример выполнения запроса (mysqli)</h2>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');
+
+$result = mysqli_query($db, "SELECT * FROM `messages`");
+
+$messages = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+foreach($messages AS $msg) {
+	echo $msg['title'].'&lt;br>';
+}</code></pre>
+</section>
+
+<section class="slide">
+<h2>Дополнительно (mysqli)</h2>
+<p>Ошибки:</p>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');
+if (mysqli_connect_errno()) {
+	echo "Не удалось подключиться к базе данных: ";
+	echo mysqli_error($db);
+	exit();
+}</code></pre>
+<p>Закрытие соединения:</p>
+<pre><code class="php">$db = mysqli_connect('localhost', 'root', '', 'epic');
+// делаем что-то с базой данных
+mysqli_close($db);</code></pre>
+</section>
+
+<section class="slide">
+<h2>Подключение к базе данных (PDO)</h2>
+<p>DSN (Data source name) - имя источника данных, содержащее информацию, необходимую для подключения к базе данных.</p>
+<pre><code class="php">new PDO($dsn, $user, $password);</code></pre>
+<pre><code class="php">$db = new PDO('mysql:host=localhost;dbname=epic', 'root', '');</code></pre>
+<pre class="next"><code class="php">$db = new PDO('mysql:host=localhost;dbname=epic', 
+  'root', '', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+]);</code></pre>
+<p>Возвращает объект <code>PDO</code> или выбрасывает исключение <code>PDOException</code>.</p>
+</section>
+
+<section class="slide">
+<h2>Выполнение запросов (PDO)</h2>
+<pre><code class="php">PDO::query($query)</code></pre>
+<pre><code class="php">$stmt = $db->query("SELECT * FROM `messages`");</code></pre>
+<p>Возвращает объект <code>PDOStatement</code> (результирующий набор в данном примере), с которым можно работать при помощи методов или <code>FALSE</code> в случае ошибки.</p>
+<p>
+	<code>fetchAll</code> - поместить в массив (PDO::FETCH_BOTH, PDO::FETCH_COLUMN ...)<br>
+	<code>fetch</code> - пройтись по массиву<br>
+	<code>fetchColumn</code> - получить один стоблец<br>
+	<code>fetchObject </code> - получить в виде объекта<br>
+	...
+</p>
+</section>
+
+<section class="slide">
+<h2>Пример выполнения запроса (PDO)</h2>
+<pre><code class="php">$db = new PDO('mysql:host=localhost;dbname=epic', 'root', '');
+
+$stmt = $db->query("SELECT * FROM `messages`");
+
+while($msg = $stmt->fetch()) {
+	echo $msg['title'].'&lt;br>';
+}
+</code></pre>
+<pre class="next"><code class="php">$db = new PDO('mysql:host=localhost;dbname=epic', 'root', '');
+
+$stmt = $db->query("SELECT `id`, `title` FROM `messages`");
+
+while($msg = $stmt->fetch(PDO::FETCH_NUM)) {
+	echo $msg[1].'&lt;br>';
+}
+</code></pre>
+</section>
+
+<section class="slide">
+<h2>SQL инъекции</h2>
+<p class="desc">Жил-был замечательный код:</p>
+<pre><code class="php">$id = $_GET['id'];
+$query = "SELECT * FROM `messages` WHERE `id`=$id";</code></pre><div class="next">
+	
+	<p class="desc">Пока однажды не пришел Вася и ввел в адресную строку коварую вещь<br>(ну кто же ожидал такого от воспитанного человека?):</p>
+	<code>http://blog.com/?id=2;DELETE FROM messages</code>
+</div>
+<p class="desc next">И удалил все сообщения из нашего блога.</p>
+<p class="desc next">Вывод - <b>никогда не доверяйте данным от пользователя</b>.<br>Даже если это ваша мама или кошка. Никому нельзя верить.</p>
+<p class="next">Как же жить дальше? Выход есть - подготовленные запросы.</p>
+</section>
+
+<section class="slide">
+<h2>Подготовленные запросы</h2>
+<p class="desc">Это обычный SQL запрос, но вместо переменных используются плейсхолдеры.<br>Они бывают позиционные и именованные.</p>
+<p><b>Позиционный плейсхолдер</b></p>
+<pre><code class="php">$stmt = $db->prepare("SELECT * FROM `messages` WHERE id = ?");
+$stmt->execute([ $_GET['id'] ]);</code></pre>
+<p><b>Именованный плейсхолдер</b></p>
+<pre><code class="php">$stmt = $db->prepare("SELECT * FROM `messages` WHERE id = :id");
+$stmt->execute([ 'id' => $_GET['id'] ]);</code></pre>
+</section>
+
+<!-- <section class="slide">
+<h2>Выносим настройки подключения</h2>
+<pre><code class="php">
+$config = [
+  'host' => 'localhost',
+  'dbname' => 'epic',
+  'user' => 'root',
+  'passwd' => '',
+  'options' => [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+  ]
+];
+
+$db = new PDO("mysql:host={$config['host']};dbname={$config['dbname']}", 
+              $config['user'], $config['passwd'], $config['options']);
+
+</code></pre>
+</section> -->
+
+	<div class="progress"></div>
+	<script src="shower/shower.min.js"></script>
+	<script src="highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

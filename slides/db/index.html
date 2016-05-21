@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>БД, СУБД И SQL</title>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="shower/styles/screen-16x10.css">
+	<link rel="stylesheet" href="highlight/styles/github-gist.css">
+	<style>
+		.slide {
+			padding-top: 30px;
+			padding-left: 60px;
+			font-size: 22px;
+		}
+		.slide::after {
+			background: #e74a2a;
+			height: auto;
+			padding-top: 0;
+			width: 30px;
+		}
+		.slide pre code {
+			line-height: 1.5;
+			width: auto;
+			margin: 0;
+			padding: 5px;
+			background: #eaeef3;
+		}
+		.slide h2 {
+			color: #e74a2a;
+			font-size: 38px;
+			font-weight: 400;
+		}
+		.progress {
+			border: 8px solid #3d85c6;
+		}
+		.desc {
+			line-height: 1.5;
+		}
+	</style>
+</head>
+<body class="shower list">
+
+	<header class="caption">
+		<h1>БД, СУБД И SQL</h1>
+	</header>
+
+<section class="slide">
+<h2>Вспоминаем что такое</h2>
+<p><b>БД</b> <span class="next">— совокупность (набор) данных, хранящихся определенным образом и структурированные для возможности поиска.</span></p>
+<p><b>СУБД</b> <span class="next">— система управления базами данных, позволяет манипулировать данными (добавлять, удалять, редактировать).</span></p>
+<p><b>SQL</b> <span class="next">— язык структурированных запросов (structured query language) для создания, изменения и управления данными.</span></p>
+</section>
+
+<section class="slide">
+<h2>SQL</h2>
+<p>У каждой СУБД есть свои особенности синтаксиса, расширяющие базовый SQL.<br>Это каcается как типов данных, так и встроенных функций.</p>
+<p>Мы работаем с <b>MySQL</b>, реляционной СУБД для малых и средних приложений.<br>Все далее касается именно этой СУБД.</p>
+<ul>
+	<li>
+		<a href="http://dev.mysql.com/doc/refman/5.7/en/">Официальная документация MySQL</a>
+	</li>
+	<li>
+		<a href="http://dev.mysql.com/doc/refman/5.7/en/func-op-summary-ref.html">Функции и операции MySQL</a>
+	</li>
+	<li>
+		<a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a> - программа для проектирования и управления базами данных</a>
+	</li>
+</ul>
+</section>
+
+<!-- 	<section class="slide desc">
+		<h2>Типы данных - целые числа</h2>
+		<p><code>INT</code> или <code>INTEGER</code><br>от -2 147 483 648 до 2 147 483 647, или от 0 до 4 294 967 295</p>
+		<p><code>TINYINT</code><br>от -128 до 127, или от 0 до 255</p>
+		<p><code>SMALLINT</code><br>от -32 768 до 32 767, или от 0 до 65 535</p>
+		<p><code>MEDIUMINT</code><br>от -8 388 608 до 8 388 607, или от 0 до 16 777 215</p>
+		<p><code>BIGINT</code><br>от -9 223 372 036 854 775 808 до 9 223 372 036 854 775 807,<br>или от 0 до 18 446 744 073 709 551 615</p>
+	</section>
+	<section class="slide desc">
+		<h2>Типы данных - дробные числа</h2>
+		<p>M - общее количество цифр (точность).<br>D - количество знаков после запятой (дробной части).</p>
+		<p><code>DECIMAL(M, D)</code> или <code>DEC</code>, <code>NUMERIC</code><br>65 и 30</p>
+		<p><code>FLOAT(M, D)</code><br>от -3.402823466E+38 до -1.175494351E-38, 0,<br>и от 1.175494351E-38 до 3.402823466E+38</p>
+		<p><code>DOUBLE(M, D)</code><br>от -1.7976931348623157E+308 до -2.2250738585072014E-308, 0,<br>и от 2.2250738585072014E-308 до 1.7976931348623157E+308</p>
+	</section>
+	<section class="slide desc">
+		<h2>Типы данных - дата и время</h2>
+		<p><code>DATE</code><br>дата в формате 'YYYY-MM-DD'</p>
+		<p><code>DATETIME(0-6)</code><br>дата и время в формате 'YYYY-MM-DD HH:MM:SS[.fraction]'</p>
+		<p><code>TIMESTAMP(0-6)</code><br>количество секунд с 1 января 1970 года</p>
+		<p><code>TIME(0-6)</code><br>время в формате 'HH:MM:SS[.fraction]'</p>
+		<p><code>YEAR</code><br>год в формате 'YYYY'</p>
+	</section> -->
+
+<section class="slide">
+<h2>Создание баз данных и таблиц</h2>
+<p>Создать базу данных <code>epic</code>:</p>
+<pre><code class="sql">CREATE DATABASE `epic`;</code></pre>
+<p><a href="http://dev.mysql.com/doc/refman/5.7/en/create-database.html">CREATE DATABASE Syntax</a></p>
+<p>Создать таблицу <code>users</code>:</p>
+<pre><code class="sql">CREATE TABLE `users` (
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`login` VARCHAR(20) UNIQUE,
+	`password` VARCHAR(32)
+);</code></pre>
+<p><a href="http://dev.mysql.com/doc/refman/5.7/en/create-table.html">CREATE TABLE Syntax</a></p>
+</section>
+
+
+
+<section class="slide">
+<h2>Добавление записей в таблицу</h2>
+<p>Добавить запись в таблицу <code>users</code>:</p>
+<pre><code class="sql">INSERT INTO `users` (NULL, 'admin', '12345');</code></pre>
+<pre><code class="sql">INSERT INTO `users` (`login`, `password`) 
+             VALUES ('admin', '12345');</code></pre>
+<pre><code class="sql">INSERT INTO `users` SET `login`='admin', 
+                        `password`='12345';</code></pre>
+<p><a href="http://dev.mysql.com/doc/refman/5.7/en/insert.html">INSERT Syntax</a></p>
+</section>
+
+
+
+	<section class="slide desc">
+		<h2>Изменение таблиц</h2>
+<p>Добавить поле <code>email</code> в таблицу <code>users</code>:</p>
+<pre><code class="sql">ALTER TABLE `users` ADD COLUMN `email` VARCHAR(100);
+ALTER TABLE `users` ADD COLUMN `email` VARCHAR(100) AFTER `id`;</code></pre>
+<p>Сменить кодировку таблицы на utf8:</p>
+<pre><code class="sql">ALTER TABLE `messages` CHARACTER SET = utf8;</code></pre>
+<p>Удалить поле <code>email</code> из таблицы <code>users</code>:</p>
+<pre><code class="sql">ALTER TABLE `users` DROP COLUMN `email`;</code></pre>
+<p>Переименовать таблицу <code>users</code>:</p>
+<pre><code class="sql">RENAME TABLE `users` TO `new_users`;</code></pre>
+	</section>
+
+
+	<section class="slide desc">
+		<h2>Изменение записей в таблицах</h2>
+		<p>Изменить поле <code>password</code> у всех записей <code>users</code>:</p>
+		<pre><code class="sql">UPDATE `users` SET `password` = MD5('12345');</code></pre>
+		<p>Изменить поле <code>password</code> у записи с <code>id</code> = 1:</p>
+		<pre><code class="sql">UPDATE `users` SET `password` = MD5('12345') WHERE `id` = 1;</code></pre>
+		<p>Изменить поле <code>password</code> у 10 записей после записи с <code>id</code> = 2:</p>
+		<pre><code class="sql">UPDATE `users` SET `password` = MD5('12345') 
+               WHERE `id` > 2 ORDER BY `id` ASC LIMIT 10;</code></pre>
+     <p><a href="http://dev.mysql.com/doc/refman/5.7/en/update.html">UPDATE Syntax</a></p>
+	</section>
+
+
+	<section class="slide desc">
+		<h2>Удаление записей из таблиц, таблиц и баз данных</h2>
+		<p>Удалить запись с <code>id</code> = 1:</p>
+		<pre><code class="sql">DELETE FROM `users` WHERE `id` = 1;</code></pre>
+		<p>Очистить таблицу <code>users</code> от всех записей:</p>
+		<pre><code class="sql">TRUNCATE TABLE `users`;</code></pre>
+		<p>Удалить таблицу <code>users</code>:</p>
+		<pre><code class="sql">DROP TABLE `users`;</code></pre>
+		<p>Удалить базу данных <code>epic</code>:</p>
+		<pre><code class="sql">DROP DATABASE `epic`;</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Выбор записей из таблицы, условия</h2>
+		Выбор всех записей из таблицы <code>messages</code>:
+		<pre><code class="sql">SELECT * FROM `messages`;</code></pre>
+		Выбор записи с <code>id</code> = 1:
+		<pre><code class="sql">SELECT * FROM `messages` WHERE `id` = 1;</code></pre>
+		Выбор записей с <code>id</code> больше 1 и меньше или равно 5:
+		<pre><code class="sql">SELECT * FROM `messages` WHERE `id` > 1 AND `id` <= 5;</code></pre>
+		Выбор записей с <code>id</code> = 2, 3, 7 или 8:
+		<pre><code class="sql">SELECT * FROM `messages` WHERE `id` IN (2, 3, 7, 8);</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Выбор записей из таблицы: сортировка, ограничение</h2>
+		Сортировка по дате (сначала новые):
+		<pre><code class="sql">SELECT * FROM `messages` ORDER BY `time` DESC;</code></pre>
+		Последние 10 записей:
+		<pre><code class="sql">SELECT * FROM `messages` ORDER BY `time` DESC LIMIT 10;</code></pre>
+		Следующие 10 записей:
+		<pre><code class="sql">SELECT * FROM `messages` ORDER BY `time` DESC LIMIT 10, 10;</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Некоторые полезные функции</h2>
+		<p><code>NOW()</code> - текущая дата и время</p>
+		<p><code>DATE_FORMAT()</code> - форматирование даты</p>
+		<p><code>CONCAT()</code> - объединение строк</p>
+		<p><code>SUBSTR()</code> - получение подстроки заданой длины</p>
+		<p><code>UPPER()</code>, <code>LOWER()</code> - смена регистра</p>
+		<p><code>COUNT()</code> - количество записей</p>
+		<p><code>MAX()</code>, <code>MIN()</code> - максимальное и минимальное значение</p>
+		<p><code>SUM()</code> - сумма</p>
+	</section>
+
+	<div class="progress"></div>
+	<script src="shower/shower.min.js"></script>
+	<script src="highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
